@@ -58,8 +58,9 @@ instance L.ToHtml a => L.ToHtml (HtmlPage a) where
   toHtml (HtmlPage x) =
     L.doctypehtml_ $ do
       L.head_ $ do
-        L.title_ "Miso isomorphic example"
+        L.title_ "Tic Tac Toe"
         L.meta_ [L.charset_ "utf-8"]
+        L.link_ [L.rel_ "stylesheet", L.type_ "text/css", L.href_ "/static/main.css"]
         L.with
           (L.script_ mempty)
           [ L.makeAttribute "src" "/static/all.js"
