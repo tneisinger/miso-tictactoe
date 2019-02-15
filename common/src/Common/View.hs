@@ -7,6 +7,8 @@ import Miso.Html
 import qualified Miso.String as Miso
 import Servant.API ((:<|>)(..))
 
+import TicTacToe
+
 import Common.Model
 import Common.Routes
 
@@ -21,14 +23,28 @@ viewModel model = view
 -- View function of the Home route.
 homeView :: Model -> View Action
 homeView m = div_
-  []
-  [ div_
+  [class_ "tictactoe-board"]
+  [ table_
     []
-    [ button_ [onClick SubtractOne] [text "-"]
-    , text $ Miso.ms $ show $ _counterValue m
-    , button_ [onClick AddOne] [text "+"]
+    [ tr_
+        []
+        [ td_ [] [button_ [] [text "cell00"]]
+        , td_ [] [button_ [] [text "cell01"]]
+        , td_ [] [button_ [] [text "cell02"]]
+        ],
+      tr_
+        []
+        [ td_ [] [button_ [] [text "cell10"]]
+        , td_ [] [button_ [] [text "cell11"]]
+        , td_ [] [button_ [] [text "cell12"]]
+        ],
+      tr_
+      []
+      [ td_ [] [button_ [] [text "cell20"]]
+      , td_ [] [button_ [] [text "cell21"]]
+      , td_ [] [button_ [] [text "cell22"]]
+      ]
     ]
-  , button_ [onClick $ ChangeURI flippedLink] [text "Go to /flipped"]
   ]
 
 -- View function of the Home route.
