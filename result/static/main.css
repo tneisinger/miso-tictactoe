@@ -1,0 +1,51 @@
+body {
+  padding-top: 30px;
+}
+
+button {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  overflow: hidden;
+  outline: none;
+  font-size: 20px;
+}
+
+div.tictactoe-board {
+  width:400px;
+  margin: 0 auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td {
+  border: 5px solid #222;
+  width: 33.333%;
+  height: 100px;
+  text-align: center;
+}
+
+td:first-of-type {
+  border-left-color: transparent;
+  border-top-color: transparent;
+}
+
+td:nth-of-type(2) {
+  border-top-color: transparent;
+}
+
+td:nth-of-type(3) {
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+
+tr:nth-of-type(3) td {
+  border-bottom-color: transparent;
+}
+
