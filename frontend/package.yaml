@@ -16,6 +16,7 @@ executables:
       - frontend
       - common
       - miso
+      - tictactoe
 
 library:
   source-dirs: src
@@ -29,6 +30,7 @@ library:
     - containers
     - network-uri
     - servant
+    - tictactoe
 
 tests:
   spec:

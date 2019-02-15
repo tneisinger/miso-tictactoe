@@ -39,6 +39,7 @@ library:
     - http-types
     - lucid
     - mtl
+    - tictactoe
 
 tests:
   spec:

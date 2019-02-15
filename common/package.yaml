@@ -17,6 +17,7 @@ library:
     - containers
     - network-uri
     - servant
+    - tictactoe
 
 tests:
   spec:
