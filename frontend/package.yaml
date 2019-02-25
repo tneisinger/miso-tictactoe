@@ -27,6 +27,7 @@ library:
     - miso
     - aeson
     - lens
+    - mtl
     - containers
     - network-uri
     - servant
