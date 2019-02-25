@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker build --tag miso_isomorphic .
+docker build --tag miso_tictactoe .
 
 id=$(docker create miso_isomorphic) \
   && echo "Copy backend/.stack-work..." \
