@@ -25,19 +25,13 @@ app = Servant.serve
   static :: Servant.Server StaticAPI
   static = Servant.serveDirectoryFileServer "static"
   serverHandlers :: Servant.Server ServerRoutes
-  serverHandlers = homeServer :<|> flippedServer
+  serverHandlers = homeServer
 -- Alternative type:
 -- Servant.Server (ToServerRoutes Common.Home HtmlPage Common.Action)
 -- Handles the route for the home page, rendering Common.homeView.
   homeServer :: Servant.Handler (HtmlPage (View Common.Action))
   homeServer =
     pure $ HtmlPage $ Common.viewModel $ Common.initialModel Common.homeLink
--- Alternative type:
--- Servant.Server (ToServerRoutes Common.Flipped HtmlPage Common.Action)
--- Renders the /flipped page.
-  flippedServer :: Servant.Handler (HtmlPage (View Common.Action))
-  flippedServer =
-    pure $ HtmlPage $ Common.viewModel $ Common.initialModel Common.flippedLink
 -- The 404 page is a Wai application because the endpoint is Raw.
 -- It just renders the page404View and sends it to the client.
   page404 :: Wai.Application
@@ -60,7 +54,10 @@ instance L.ToHtml a => L.ToHtml (HtmlPage a) where
       L.head_ $ do
         L.title_ "Tic Tac Toe"
         L.meta_ [L.charset_ "utf-8"]
-        L.link_ [L.rel_ "stylesheet", L.type_ "text/css", L.href_ "/static/main.css"]
+        L.link_ [ L.rel_ "stylesheet"
+                , L.type_ "text/css"
+                , L.href_ "/static/main.css"
+                ]
         L.with
           (L.script_ mempty)
           [ L.makeAttribute "src" "/static/all.js"
