@@ -49,101 +49,105 @@ pickMarkView = div_
 
 gameView :: GameState -> View Action
 gameView gs =
-  div_
-  [class_ "tictactoe-board"]
-  [ table_
-    []
-    [ tbody_
-      []
-      [ tr_
+  let outcome = checkGSForOutcome gs
+   in div_
+      [class_ "tictactoe-board"]
+      [ table_
         []
-        [ td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell00]
-          [ button_
-            [onClick (FillCell Cell00)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell00]
-          ]
-        , td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell01]
-          [ button_
-            [onClick (FillCell Cell01)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell01]
-          ]
-        , td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell02]
-          [ button_
-            [onClick (FillCell Cell02)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell02]
+        [ tbody_
+          []
+          [ tr_
+            []
+            [ td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell00]
+              [ button_
+                [onClick (FillCell Cell00)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell00]
+              ]
+            , td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell01]
+              [ button_
+                [onClick (FillCell Cell01)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell01]
+              ]
+            , td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell02]
+              [ button_
+                [onClick (FillCell Cell02)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell02]
+              ]
+            ],
+            tr_
+            []
+            [ td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell10]
+              [ button_
+                [onClick (FillCell Cell10)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell10]
+              ]
+            , td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell11]
+              [ button_
+                [onClick (FillCell Cell11)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell11]
+              ]
+            , td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell12]
+              [ button_
+                [onClick (FillCell Cell12)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell12]
+              ]
+            ],
+            tr_
+            []
+            [ td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell20]
+              [ button_
+                [onClick (FillCell Cell20)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell20]
+              ]
+            , td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell21]
+              [ button_
+                [onClick (FillCell Cell21)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell21]
+              ]
+            , td_
+              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell22]
+              [ button_
+                [onClick (FillCell Cell22)]
+                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell22]
+              ]
+            ]
           ]
         ],
-        tr_
-        []
-        [ td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell10]
-          [ button_
-            [onClick (FillCell Cell10)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell10]
-          ]
-        , td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell11]
-          [ button_
-            [onClick (FillCell Cell11)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell11]
-          ]
-        , td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell12]
-          [ button_
-            [onClick (FillCell Cell12)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell12]
-          ]
-        ],
-        tr_
-        []
-        [ td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell20]
-          [ button_
-            [onClick (FillCell Cell20)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell20]
-          ]
-        , td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell21]
-          [ button_
-            [onClick (FillCell Cell21)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell21]
-          ]
-        , td_
-          [class_ $ Miso.ms $ show $ getCellState gs Cell22]
-          [ button_
-            [onClick (FillCell Cell22)]
-            [text $ Miso.ms $ showCellContents (gameBoard gs) Cell22]
-          ]
-        ]
+        p_ [class_ "outcome-message"] [text $ makeOutcomeMsg outcome],
+        button_ [onClick $ HideGame] [text "New Game"]
       ]
-    ],
-    p_ [class_ "outcome-message"] [text $ makeOutcomeMsg gs],
-    button_ [onClick $ HideGame] [text "New Game"]
-  ]
 
-makeOutcomeMsg :: GameState -> Miso.MisoString
-makeOutcomeMsg gs =
-  case checkGSForOutcome gs of
-    Nothing                -> " "
-    Just Draw              -> "Draw!"
-    Just (Winner Computer) -> "Computer wins!"
-    Just (Winner Human)    -> "You win!"
+makeOutcomeMsg :: Maybe (GameOutcome Player) -> Miso.MisoString
+makeOutcomeMsg Nothing = " "
+makeOutcomeMsg (Just Draw) = "Draw!"
+makeOutcomeMsg (Just (Winner Computer)) = "Computer wins!"
+makeOutcomeMsg (Just (Winner Human)) = "You win!"
 
-data CellState = NormalCell | WinCell
+data CellState = NormalCell | HumanWinCell | ComputerWinCell
   deriving (Eq)
 
 instance Show CellState where
-  show NormalCell = "normal-cell"
-  show WinCell    = "win-cell"
+  show NormalCell      = "normal-cell"
+  show HumanWinCell    = "human-win-cell"
+  show ComputerWinCell = "computer-win-cell"
 
-getCellState :: GameState -> Cell -> CellState
-getCellState gs cell =
-  if cell `elem` getWinningCells (gameBoard gs)
-     then WinCell
-     else NormalCell
+getCellState :: Maybe (GameOutcome Player) -> GameState -> Cell -> CellState
+getCellState Nothing _ _ = NormalCell
+getCellState (Just Draw) _ _ = NormalCell
+getCellState (Just (Winner player)) gs cell =
+    case (isWinCell, player) of
+      (False, _)       -> NormalCell
+      (True, Human)    -> HumanWinCell
+      (True, Computer) -> ComputerWinCell
+  where isWinCell = cell `elem` getWinningCells (gameBoard gs)
 
 -- Handle 404 errors.
 page404View :: View Action

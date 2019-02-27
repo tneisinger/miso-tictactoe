@@ -80,7 +80,12 @@ p.outcome-message {
   padding: 0;
 }
 
-td.win-cell button {
+td.computer-win-cell button {
   color: red;
+  font-weight: bold;
+}
+
+td.human-win-cell button {
+  color: #00b300;
   font-weight: bold;
 }
