@@ -7,6 +7,9 @@ The app is built and run inside a [Docker](https://www.docker.com) container.
 [This project scaffold](https://github.com/tneisinger/miso-stack-docker) was
 used as a starting point for development of this app.
 
+The tic-tac-toe game logic for this app comes from
+[here](https://github.com/tneisinger/haskell-tictactoe).
+
 ## Prerequisites for Installation
 
 You will need to have [docker](https://docs.docker.com/install/) installed
