@@ -15,4 +15,4 @@ extra-deps:
   - cabal-doctest-1.0.6
   - phoityne-vscode-0.0.22.0
   - github: tneisinger/haskell-tictactoe
-    commit: 6c540648cc3028609bffc32bfa2cb50d9581bde9
+    commit: ce130a353a4934b6031882e7ef65634402e2b07e
