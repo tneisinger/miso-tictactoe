@@ -1,32 +1,26 @@
-# Miso Isomorphic Example using Docker and Stack
+# Miso Tic-Tac-Toe App
 
-Run a simple isomorphic [Miso](https://github.com/dmjio/miso) app inside a
-[docker](https://www.docker.com) container.  Code changes will automatically
-trigger the server to rebuild and restart, so your changes will be viewable
-after a browser refresh.
+An isomorphic Tic-Tac-Toe web app, built with
+[Miso](https://github.com/dmjio/miso).
 
-This repo borrows heavily from the very helpful [Tehnix/miso-isomorphic-stack
-repo](https://github.com/Tehnix/miso-isomorphic-stack), which itself is based
-on [this Miso example](https://github.com/FPtje/miso-isomorphic-example).
+The app is built and run inside a [Docker](https://www.docker.com) container.
+[This project scaffold](https://github.com/tneisinger/miso-stack-docker) was
+used as a starting point for development of this app.
 
-The goal here is to create a simple editor-agnostic development environment for
-an isomorphic Miso app that will be easy to deploy.  I also wanted to avoid
-using [Nix](https://nixos.org/nix/), since I'm already familiar with
-[Stack](https://docs.haskellstack.org/en/stable/README/).
-
-This is a work-in-progress, so suggestions are welcome.
-
-## Prerequisites
+## Prerequisites for Installation
 
 You will need to have [docker](https://docs.docker.com/install/) installed
-on your system.  This repo was built using docker version 18.09.1.
+on your system.  This project was built using docker version 18.09.1.
+
+If you want to modify the project, I would recommend installing
+[stack](https://docs.haskellstack.org/en/stable/README/) as well.
 
 ## Clone and Build
 
 Clone this repo and run build-docker-image.sh:
 ```bash
-git clone https://github.com/tneisinger/miso-stack-docker
-cd miso-stack-docker
+git clone https://github.com/tneisinger/miso-tictactoe
+cd miso-tictactoe
 ./build-docker-image.sh
 ```
 **Note: Running build-docker-image.sh will take a long time.**
@@ -38,14 +32,14 @@ To start the app, simply run:
 ./start-container.sh
 ```
 This will start a docker container based on the docker image that was built by
-`build-docker-image.sh`.  This docker container will automatically run
+`build-docker-image.sh`.  The docker container will automatically run
 `reloader.sh`, which is responsible for running the app server, as well as
 rebuilding and restarting the server on code changes.
 
 Go to `http://localhost:3003` in your browser to see the result.
 
-## Areas For Improvement
+## Attributions
 
-- It's great that the server automatically rebuilds and restarts on code
-  changes, but it's not so great that it does it so slowly.  In the worst case,
-  this process has taken up to 16 seconds on my machine!
+The [scaffold](https://github.com/tneisinger/miso-stack-docker) for
+this project was heavily inspired by [Tehnix/miso-isomorphic-stack
+repo](https://github.com/Tehnix/miso-isomorphic-stack).
