@@ -8,9 +8,9 @@ import Miso.Html
 import qualified Miso.String as Miso
 import Servant.API ((:<|>)(..))
 
-import TicTacToe.Exports (Cell(..), GameOutcome(..), GameState(gameBoard),
-                          Player(..), checkGSForOutcome, getWinningCells,
-                          showCellContents)
+import TicTacToe.Exports (Cell(..), Difficulty(..), GameOutcome(..),
+                          GameState(gameBoard), Player(..), checkForOutcome,
+                          getWinningCells, showCellContents)
 
 import Common.Model
 import Common.Routes
@@ -32,24 +32,53 @@ homeView m =
 selectView :: Model -> View Action
 selectView m =
   case (_showGame m, _gameState m) of
-    (True, Just gs) -> gameView gs
-    _               -> pickMarkView
+    (True, Just gs) -> playView gs
+    _               -> gameSetupView m
 
 -- View function of the Home route.
-pickMarkView :: View Action
-pickMarkView = div_
-  [class_ "pick-mark"]
-  [ p_ [] [ text "Play as"
-          , button_ [class_ "mark-button", onClick PickMarkX] [text "X"]
-          , text "or"
-          , button_ [class_ "mark-button", onClick PickMarkO] [text "O"]
-          , text "?"
-          ]
+gameSetupView :: Model -> View Action
+gameSetupView m =
+  div_
+  []
+  [ div_
+    [class_ "pick-mark"]
+    [ p_ [] [ text "Play as"
+            , button_ [class_ "mark-button", onClick PickMarkX] [text "X"]
+            , text "or"
+            , button_ [class_ "mark-button", onClick PickMarkO] [text "O"]
+            , text "?"
+            ]
+    ]
+  , div_
+    [ class_ "pick-difficulty"]
+    [ label_
+      [ for_ "difficulty-select" ] [ text "Difficulty:" ]
+    , select_
+      [ id_ "difficulty-select"
+      , onChange (\misoStr -> ChangeDifficulty misoStr)
+      ]
+      [ option_
+        [ selected_ (_gameDifficulty m == Easy)
+        , value_ "Easy"
+        ]
+        [ text "Easy" ]
+      , option_
+        [ selected_ (_gameDifficulty m == Medium)
+        , value_ "Medium"
+        ]
+        [ text "Medium" ]
+      , option_
+        [ selected_ (_gameDifficulty m == Hard)
+        , value_ "Hard" 
+        ]
+        [ text "Hard" ]
+      ]
+    ]
   ]
 
-gameView :: GameState -> View Action
-gameView gs =
-  let outcome = checkGSForOutcome gs
+playView :: GameState -> View Action
+playView gs =
+  let outcome = checkForOutcome gs
    in div_
       [class_ "tictactoe-board"]
       [ table_

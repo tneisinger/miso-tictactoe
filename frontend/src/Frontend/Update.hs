@@ -1,11 +1,13 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Frontend.Update where
 
 import Control.Monad.State
 import Control.Lens ((.=), view)
 import qualified Miso
-import TicTacToe.Exports (Cell, GameState, Mark(..), checkGSForOutcome,
-                          doComputerMove, doHumanMove, initGameState,
-                          newGameState)
+import Miso.String (MisoString)
+import TicTacToe.Exports (Cell, Difficulty(..), GameState, Mark(..),
+                          checkForOutcome, doComputerMove, doHumanMove,
+                          initGameState, newGameState)
 
 import qualified Common.Model as Common
 import qualified Common.Routes as Common
@@ -18,10 +20,11 @@ updateModel action = case action of
     Miso.pushURI uri
     pure Common.NoOp
   Common.HandleURI uri -> Common.uri .= uri
+  Common.ChangeDifficulty misoStr -> changeDifficulty misoStr
   Common.PickMarkX -> startGame X
   Common.PickMarkO -> startGame O >> computerMove
   Common.FillCell cell -> do
-    maybeGS <- Common._gameState <$> get
+    maybeGS <- gets Common._gameState
     case maybeGS of
       Nothing -> pure ()
       Just gs -> humanMove gs cell
@@ -30,10 +33,11 @@ updateModel action = case action of
 
 startGame :: Mark -> Miso.Transition Common.Action Common.Model ()
 startGame mark = do
-  maybeGS <- Common._gameState <$> get
+  maybeGS <- gets Common._gameState
+  d <- gets Common._gameDifficulty
   case maybeGS of
-    Nothing -> Common.gameState .= (Just $ initGameState mark 42)
-    Just gs -> Common.gameState .= (Just $ newGameState gs mark)
+    Nothing -> Common.gameState .= (Just $ initGameState mark 42 d)
+    Just gs -> Common.gameState .= (Just $ newGameState gs mark d)
   Common.showGame .= True
 
 humanMove :: GameState -> Cell -> Miso.Transition Common.Action Common.Model ()
@@ -47,7 +51,7 @@ humanMove gs cell = do
 -- | Do a ComputerMove action if the game isn't over yet
 pcMoveIfStillGame :: GameState -> Miso.Transition Common.Action Common.Model ()
 pcMoveIfStillGame gs =
-  case checkGSForOutcome gs of
+  case checkForOutcome gs of
     Nothing -> Miso.scheduleIO $ pure Common.ComputerMove
     Just _  -> pure ()
 
@@ -60,3 +64,9 @@ computerMove = do
       case execStateT doComputerMove gs of
         Left err -> Miso.scheduleIO_ $ putStrLn $ show err
         Right gs' -> Common.gameState .= Just gs'
+
+changeDifficulty :: MisoString -> Miso.Transition Common.Action Common.Model ()
+changeDifficulty "Easy"   = Common.gameDifficulty .= Easy
+changeDifficulty "Medium" = Common.gameDifficulty .= Medium
+changeDifficulty "Hard"   = Common.gameDifficulty .= Hard
+changeDifficulty _        = pure ()
