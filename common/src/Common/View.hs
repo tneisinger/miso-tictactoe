@@ -9,8 +9,8 @@ import qualified Miso.String as Miso
 import Servant.API ((:<|>)(..))
 
 import TicTacToe.Exports (Cell(..), Difficulty(..), GameOutcome(..),
-                          GameState(gameBoard), Player(..), checkForOutcome,
-                          getWinningCells, showCellContents)
+                          GameState(gameBoard), Player(..), allDifficulties,
+                          checkForOutcome, getWinningCells, showCellContents)
 
 import Common.Model
 import Common.Routes
@@ -57,22 +57,7 @@ gameSetupView m =
       [ id_ "difficulty-select"
       , onChange (\misoStr -> ChangeDifficulty misoStr)
       ]
-      [ option_
-        [ selected_ (_gameDifficulty m == Easy)
-        , value_ "Easy"
-        ]
-        [ text "Easy" ]
-      , option_
-        [ selected_ (_gameDifficulty m == Medium)
-        , value_ "Medium"
-        ]
-        [ text "Medium" ]
-      , option_
-        [ selected_ (_gameDifficulty m == Hard)
-        , value_ "Hard" 
-        ]
-        [ text "Hard" ]
-      ]
+      (map (makeDifficultyOption m) allDifficulties)
     ]
   ]
 
@@ -87,67 +72,13 @@ playView gs =
           []
           [ tr_
             []
-            [ td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell00]
-              [ button_
-                [onClick (FillCell Cell00)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell00]
-              ]
-            , td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell01]
-              [ button_
-                [onClick (FillCell Cell01)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell01]
-              ]
-            , td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell02]
-              [ button_
-                [onClick (FillCell Cell02)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell02]
-              ]
-            ],
-            tr_
+            (map (makeTDCell outcome gs) [Cell00 .. Cell02])
+          , tr_
             []
-            [ td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell10]
-              [ button_
-                [onClick (FillCell Cell10)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell10]
-              ]
-            , td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell11]
-              [ button_
-                [onClick (FillCell Cell11)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell11]
-              ]
-            , td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell12]
-              [ button_
-                [onClick (FillCell Cell12)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell12]
-              ]
-            ],
-            tr_
+            (map (makeTDCell outcome gs) [Cell10 .. Cell12])
+          , tr_
             []
-            [ td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell20]
-              [ button_
-                [onClick (FillCell Cell20)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell20]
-              ]
-            , td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell21]
-              [ button_
-                [onClick (FillCell Cell21)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell21]
-              ]
-            , td_
-              [class_ $ Miso.ms $ show $ getCellState outcome gs Cell22]
-              [ button_
-                [onClick (FillCell Cell22)]
-                [text $ Miso.ms $ showCellContents (gameBoard gs) Cell22]
-              ]
-            ]
+            (map (makeTDCell outcome gs) [Cell20 .. Cell22])
           ]
         ],
         p_ [class_ "outcome-message"] [text $ makeOutcomeMsg outcome],
@@ -177,6 +108,23 @@ getCellState (Just (Winner player)) gs cell =
       (True, Human)    -> HumanWinCell
       (True, Computer) -> ComputerWinCell
   where isWinCell = cell `elem` getWinningCells (gameBoard gs)
+
+makeDifficultyOption :: Model -> Difficulty -> View Action
+makeDifficultyOption m d =
+  option_
+  [ selected_ (_gameDifficulty m == d)
+  , value_ $ Miso.ms $ show d
+  ]
+  [ text (Miso.ms $ show d) ]
+
+makeTDCell :: Maybe (GameOutcome Player) -> GameState -> Cell -> View Action
+makeTDCell outcome gs cell =
+  td_
+  [class_ $ Miso.ms $ show $ getCellState outcome gs cell]
+  [ button_
+    [onClick (FillCell cell)]
+    [text $ Miso.ms $ showCellContents (gameBoard gs) cell]
+  ]
 
 -- Handle 404 errors.
 page404View :: View Action
