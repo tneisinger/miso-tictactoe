@@ -23,19 +23,21 @@ viewModel model = view
     $ Miso.runRoute (Proxy :: Proxy ViewRoutes) handlers _uri model
   handlers = homeView
 
+-- View function of the Home route.
 homeView :: Model -> View Action
 homeView m =
   div_
   [class_ "container"]
-  [ selectView m ]
+  [ getCorrectView m ]
 
-selectView :: Model -> View Action
-selectView m =
+-- Based on the current model, either return the gameSetupView or the playView
+getCorrectView :: Model -> View Action
+getCorrectView m =
   case (_showGame m, _gameState m) of
     (True, Just gs) -> playView gs
     _               -> gameSetupView m
 
--- View function of the Home route.
+-- The view for setting up a game
 gameSetupView :: Model -> View Action
 gameSetupView m =
   div_
@@ -61,6 +63,7 @@ gameSetupView m =
     ]
   ]
 
+-- The view for playing a game
 playView :: GameState -> View Action
 playView gs =
   let outcome = checkForOutcome gs
@@ -85,30 +88,35 @@ playView gs =
         button_ [onClick $ HideGame] [text "New Game"]
       ]
 
+-- Create a message that will be displayed when a game is over
 makeOutcomeMsg :: Maybe (GameOutcome Player) -> Miso.MisoString
 makeOutcomeMsg Nothing = " "
 makeOutcomeMsg (Just Draw) = "Draw!"
 makeOutcomeMsg (Just (Winner Computer)) = "Computer wins!"
 makeOutcomeMsg (Just (Winner Human)) = "You win!"
 
+-- A datatype to represent the 3 possible cases of a cell
 data CellState = NormalCell | HumanWinCell | ComputerWinCell
   deriving (Eq)
 
+-- showing a CellState returns the css classname used to color the cell
 instance Show CellState where
   show NormalCell      = "normal-cell"
   show HumanWinCell    = "human-win-cell"
   show ComputerWinCell = "computer-win-cell"
 
+-- get the CellState of a Cell
 getCellState :: Maybe (GameOutcome Player) -> GameState -> Cell -> CellState
 getCellState Nothing _ _ = NormalCell
 getCellState (Just Draw) _ _ = NormalCell
-getCellState (Just (Winner player)) gs cell =
-    case (isWinCell, player) of
+getCellState (Just (Winner winningPlayer)) gs cell =
+    case (isWinCell, winningPlayer) of
       (False, _)       -> NormalCell
       (True, Human)    -> HumanWinCell
       (True, Computer) -> ComputerWinCell
   where isWinCell = cell `elem` getWinningCells (gameBoard gs)
 
+-- Create an option element for the difficulty select in the gameSetupView
 makeDifficultyOption :: Model -> Difficulty -> View Action
 makeDifficultyOption m d =
   option_
@@ -117,6 +125,7 @@ makeDifficultyOption m d =
   ]
   [ text (Miso.ms $ show d) ]
 
+-- Create a td element for the tic-tac-toe board in the playView
 makeTDCell :: Maybe (GameOutcome Player) -> GameState -> Cell -> View Action
 makeTDCell outcome gs cell =
   td_
