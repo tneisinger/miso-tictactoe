@@ -41,9 +41,9 @@ startGame mark = do
   Common.showGame .= True
 
 humanMove :: GameState -> Cell -> Miso.Transition Common.Action Common.Model ()
-humanMove gs cell = do
+humanMove gs cell =
   case execStateT (doHumanMove cell) gs of
-    Left err -> Miso.scheduleIO_ $ putStrLn $ show err
+    Left err -> Miso.scheduleIO_ $ print err
     Right gs' -> do
       Common.gameState .= Just gs'
       pcMoveIfStillGame gs'
@@ -57,12 +57,12 @@ pcMoveIfStillGame gs =
 
 computerMove :: Miso.Transition Common.Action Common.Model ()
 computerMove = do
-  maybeGS <- Common._gameState <$> get
+  maybeGS <- gets Common._gameState
   case maybeGS of
     Nothing -> pure ()
-    Just gs -> do
+    Just gs ->
       case execStateT doComputerMove gs of
-        Left err -> Miso.scheduleIO_ $ putStrLn $ show err
+        Left err -> Miso.scheduleIO_ $ print err
         Right gs' -> Common.gameState .= Just gs'
 
 changeDifficulty :: MisoString -> Miso.Transition Common.Action Common.Model ()

@@ -49,7 +49,7 @@ gameSetupView m =
       [ for_ "difficulty-select" ] [ text "Select Difficulty:" ]
     , select_
       [ id_ "difficulty-select"
-      , onChange (\misoStr -> ChangeDifficulty misoStr)
+      , onChange ChangeDifficulty
       ]
       (map (makeDifficultyOption m) allDifficulties)
     ]
@@ -86,7 +86,7 @@ playView gs =
           ]
         ],
         p_ [class_ "outcome-message"] [text $ makeOutcomeMsg outcome],
-        button_ [onClick $ HideGame] [text "New Game"]
+        button_ [onClick HideGame] [text "New Game"]
       ]
 
 -- Create a message that will be displayed when a game is over
