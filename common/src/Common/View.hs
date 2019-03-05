@@ -28,7 +28,8 @@ homeView :: Model -> View Action
 homeView m =
   div_
   [class_ "container"]
-  [ getCorrectView m ]
+  [ h1_ [] [text "Tic-Tac-Toe!"]
+  , getCorrectView m ]
 
 -- Based on the current model, either return the gameSetupView or the playView
 getCorrectView :: Model -> View Action
@@ -41,8 +42,18 @@ getCorrectView m =
 gameSetupView :: Model -> View Action
 gameSetupView m =
   div_
-  []
+  [ class_ "game-setup" ]
   [ div_
+    [ class_ "pick-difficulty"]
+    [ label_
+      [ for_ "difficulty-select" ] [ text "Select Difficulty:" ]
+    , select_
+      [ id_ "difficulty-select"
+      , onChange (\misoStr -> ChangeDifficulty misoStr)
+      ]
+      (map (makeDifficultyOption m) allDifficulties)
+    ]
+  , div_
     [class_ "pick-mark"]
     [ p_ [] [ text "Play as"
             , button_ [class_ "mark-button", onClick PickMarkX] [text "X"]
@@ -50,16 +61,6 @@ gameSetupView m =
             , button_ [class_ "mark-button", onClick PickMarkO] [text "O"]
             , text "?"
             ]
-    ]
-  , div_
-    [ class_ "pick-difficulty"]
-    [ label_
-      [ for_ "difficulty-select" ] [ text "Difficulty:" ]
-    , select_
-      [ id_ "difficulty-select"
-      , onChange (\misoStr -> ChangeDifficulty misoStr)
-      ]
-      (map (makeDifficultyOption m) allDifficulties)
     ]
   ]
 

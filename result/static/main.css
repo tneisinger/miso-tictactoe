@@ -1,5 +1,4 @@
 body {
-  padding-top: 30px;
   font-family: Sans-Serif;
   font-size: 24px;
   text-align: center;
@@ -88,4 +87,16 @@ td.computer-win-cell button {
 td.human-win-cell button {
   color: #00b300;
   font-weight: bold;
+}
+
+div.pick-difficulty {
+  font-size: 25px;
+}
+
+.pick-difficulty label {
+  padding-right: 20px;
+}
+
+.pick-difficulty select {
+  font-size: 20px;
 }
